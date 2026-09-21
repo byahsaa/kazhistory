@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Three Uluses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Spectral:wght@300;400;600&family=Archivo+Narrow:wght@500;600;700&display=swap">
+
+<style>
+  :root{
+    --paper:#E9EBE6;
+    --paper-2:#DFE2DB;
+    --paper-3:#D3D7CE;
+    --ink:#14191A;
+    --ink-soft:#4E5755;
+    --ink-faint:#7C8683;
+    --rule:#BFC5BA;
+    --madder:#9E2B25;
+    --madder-tint:#EADFDC;
+    --steppe:#5F6E45;
+    --steppe-tint:#E1E5D6;
+    --water:#37576A;
+    --water-tint:#DBE2E4;
+    --sel:#9E2B25;
+
+    --f-display:"Fraunces","Hoefler Text",Georgia,serif;
+    --f-body:"Spectral","Iowan Old Style",Georgia,serif;
+    --f-label:"Archivo Narrow","Helvetica Neue",Arial,sans-serif;
+
+    --gutter:clamp(16px,4vw,56px);
+    --rail:104px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#11161A;
+      --paper-2:#182026;
+      --paper-3:#20292F;
+      --ink:#E3E7E0;
+      --ink-soft:#A3ADA8;
+      --ink-faint:#7C8782;
+      --rule:#2C363C;
+      --madder:#D05A50;
+      --madder-tint:#2B1E1D;
+      --steppe:#9FB173;
+      --steppe-tint:#1F2419;
+      --water:#78A6BE;
+      --water-tint:#182227;
+      --sel:#D05A50;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#11161A;
+    --paper-2:#182026;
+    --paper-3:#20292F;
+    --ink:#E3E7E0;
+    --ink-soft:#A3ADA8;
+    --ink-faint:#7C8782;
+    --rule:#2C363C;
+    --madder:#D05A50;
+    --madder-tint:#2B1E1D;
+    --steppe:#9FB173;
+    --steppe-tint:#1F2419;
+    --water:#78A6BE;
+    --water-tint:#182227;
+    --sel:#D05A50;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--f-body);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--sel);color:var(--paper)}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--sel);outline-offset:3px}
+
+  .label{
+    font-family:var(--f-label);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    font-size:12px;
+    color:var(--ink-faint);
+  }
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---------- header ---------- */
+  header.bar{
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    z-index:20;
+    background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--rule);
+  }
+  .bar-in{
+    max-width:1320px;margin:0 auto;
+    padding-inline:var(--gutter);
+    padding-block:10px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .brand{
+    font-family:var(--f-label);font-weight:700;text-transform:uppercase;
+    letter-spacing:.16em;font-size:12px;color:var(--ink);
+    margin-right:auto;
+  }
+  .brand span{color:var(--ink-faint);font-weight:500}
+  .btn{
+    font-family:var(--f-label);font-weight:600;text-transform:uppercase;
+    letter-spacing:.1em;font-size:11.5px;
+    background:transparent;color:var(--ink);
+    border:1px solid var(--rule);
+    padding:7px 12px;border-radius:2px;
+    cursor:pointer;line-height:1;
+  }
+  .btn:hover{border-color:var(--ink-soft)}
+  .btn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .timer{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid var(--rule);border-radius:2px;padding:4px 6px 4px 10px;
+  }
+  .clock{
+    font-family:var(--f-label);font-weight:700;font-size:15px;
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;min-width:48px;
+  }
+  .clock.warn{color:var(--madder)}
+  .timer .btn{border:none;padding:6px 8px}
+  .timer .btn:hover{background:var(--paper-3)}
+
+  /* ---------- shell ---------- */
+  main{max-width:1320px;margin:0 auto;padding-inline:var(--gutter)}
+
+  /* ---------- hero ---------- */
+  .hero{padding-block:clamp(40px,7vw,84px) clamp(28px,4vw,48px)}
+  .hero h1{
+    font-family:var(--f-display);
+    font-weight:600;
+    font-size:clamp(38px,7.2vw,86px);
+    line-height:.98;
+    letter-spacing:-.02em;
+    margin:14px 0 0;
+    text-wrap:balance;
+    max-width:16ch;
+  }
+  .hero h1 em{font-style:italic;color:var(--madder);font-weight:400}
+  .hero .standfirst{
+    margin:22px 0 0;
+    font-size:clamp(17px,2.1vw,21px);
+    line-height:1.55;
+    color:var(--ink-soft);
+    max-width:56ch;
+  }
+  .meta{
+    display:flex;gap:10px 26px;flex-wrap:wrap;
+    margin-top:26px;padding-top:14px;border-top:1px solid var(--rule);
+  }
+
+  /* ---------- timeline ---------- */
+  .tl-wrap{overflow-x:auto;padding-bottom:6px;border-block:1px solid var(--rule)}
+  .tl{display:flex;min-width:660px;padding-block:22px}
+  .tl-item{flex:1;padding-right:20px;position:relative}
+  .tl-item::before{
+    content:"";position:absolute;left:0;top:6px;width:9px;height:9px;
+    background:var(--ink-faint);border-radius:50%;
+  }
+  .tl-item.key::before{background:var(--madder);width:11px;height:11px;top:5px}
+  .tl-item{padding-left:20px}
+  .tl-y{font-family:var(--f-label);font-weight:700;font-size:19px;letter-spacing:.02em;display:block}
+  .tl-item.key .tl-y{color:var(--madder)}
+  .tl-t{display:block;font-size:14px;line-height:1.4;color:var(--ink-soft);margin-top:3px;max-width:19ch}
+
+  /* ---------- sections ---------- */
+  section.part{
+    display:grid;
+    grid-template-columns:var(--rail) minmax(0,1fr);
+    gap:0 32px;
+    padding-block:clamp(44px,6vw,80px);
+    border-bottom:1px solid var(--rule);
+  }
+  .rail{position:relative}
+  .rail .rail-in{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
+  .rail .n{
+    font-family:var(--f-label);font-weight:700;font-size:12px;
+    letter-spacing:.16em;color:var(--madder);display:block;
+  }
+  .rail .yr{
+    font-family:var(--f-display);font-weight:400;font-size:28px;
+    line-height:1;color:var(--ink-faint);display:block;margin-top:6px;
+  }
+  .body{min-width:0}
+  .body h2{
+    font-family:var(--f-display);font-weight:600;
+    font-size:clamp(27px,3.6vw,42px);line-height:1.06;
+    letter-spacing:-.015em;margin:0 0 18px;text-wrap:balance;max-width:20ch;
+  }
+  .body p{margin:0 0 16px;max-width:64ch}
+  .body p:last-child{margin-bottom:0}
+  .lede{font-size:19px;color:var(--ink-soft)}
+  strong{font-weight:600}
+
+  /* ---------- decimal ladder ---------- */
+  .ladder{display:flex;flex-direction:column;gap:7px;margin:26px 0 8px}
+  .rung{display:flex;align-items:center;gap:14px}
+  .rung .fill{
+    height:26px;background:var(--paper-3);
+    border-left:3px solid var(--ink-soft);
+    display:flex;align-items:center;padding-left:10px;
+  }
+  .rung:nth-child(4) .fill{border-left-color:var(--madder);background:var(--madder-tint)}
+  .rung .fill span{
+    font-family:var(--f-label);font-weight:700;font-size:12.5px;
+    letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+  }
+  .rung .cnt{font-family:var(--f-label);font-weight:600;font-size:13px;color:var(--ink-faint);white-space:nowrap}
+
+  /* ---------- pull ---------- */
+  .pull{
+    margin:8px 0 0;padding:26px 0 0;border-top:2px solid var(--madder);
+  }
+  .pull q{
+    display:block;quotes:none;
+    font-family:var(--f-display);font-weight:400;font-style:italic;
+    font-size:clamp(21px,2.9vw,32px);line-height:1.22;letter-spacing:-.01em;
+    max-width:24ch;
+  }
+  .pull .src{margin-top:14px}
+
+  /* ---------- two fates ---------- */
+  .fates{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:8px}
+  .fate{padding:24px 22px;background:var(--paper-2)}
+  .fate.dark{background:var(--madder-tint)}
+  .fate.green{background:var(--steppe-tint)}
+  .fate h3{
+    font-family:var(--f-label);font-weight:700;text-transform:uppercase;
+    letter-spacing:.12em;font-size:12.5px;margin:0 0 12px;
+  }
+  .fate.dark h3{color:var(--madder)}
+  .fate.green h3{color:var(--steppe)}
+  .fate p{font-size:16px;margin:0 0 12px;max-width:none}
+  .fate p:last-child{margin:0}
+  .cities{
+    font-family:var(--f-label);font-weight:600;font-size:13px;
+    letter-spacing:.06em;color:var(--ink-soft);
+  }
+
+  /* ---------- territory strip ---------- */
+  .strip{display:flex;gap:2px;margin:6px 0 0;min-height:150px}
+  .seg{
+    flex-grow:var(--w);flex-basis:0;
+    border:none;cursor:pointer;text-align:left;
+    padding:16px 14px;color:var(--paper);
+    display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+    font-family:inherit;
+    transition:filter .18s ease;
+  }
+  @media (prefers-reduced-motion:reduce){.seg{transition:none}}
+  .seg:hover{filter:brightness(1.12)}
+  .seg[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:-3px}
+  .seg-a{background:#9E2B25}
+  .seg-b{background:#5F6E45}
+  .seg-c{background:#37576A}
+  .seg .who{
+    font-family:var(--f-label);font-weight:700;text-transform:uppercase;
+    letter-spacing:.11em;font-size:12px;opacity:.92;
+  }
+  .seg .where{font-family:var(--f-display);font-weight:600;font-size:clamp(16px,1.9vw,23px);line-height:1.1}
+  .seg .share{font-family:var(--f-label);font-weight:600;font-size:12px;opacity:.82}
+  .scale{
+    display:flex;justify-content:space-between;
+    margin-top:8px;padding-top:7px;border-top:1px solid var(--rule);
+  }
+  .detail{
+    margin-top:2px;padding:22px;background:var(--paper-2);
+    border-top:3px solid var(--sel);
+  }
+  .detail h3{
+    font-family:var(--f-display);font-weight:600;font-size:22px;
+    margin:0 0 8px;line-height:1.15;
+  }
+  .detail p{font-size:16.5px;margin:0;max-width:62ch;color:var(--ink-soft)}
+  .detail .tag{display:block;margin-bottom:9px}
+
+  /* ---------- ledger ---------- */
+  .ledger{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:8px}
+  .col{background:var(--paper-2);padding:24px 22px}
+  .col h3{
+    font-family:var(--f-label);font-weight:700;text-transform:uppercase;
+    letter-spacing:.12em;font-size:12.5px;margin:0 0 14px;
+  }
+  .col.broke h3{color:var(--madder)}
+  .col.built h3{color:var(--steppe)}
+  .col ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:13px}
+  .col li{position:relative;padding-left:20px;font-size:16px;line-height:1.5}
+  .col li::before{
+    content:"";position:absolute;left:0;top:.62em;width:10px;height:2px;background:var(--ink-faint);
+  }
+  .col.broke li::before{background:var(--madder)}
+  .col.built li::before{background:var(--steppe)}
+
+  /* ---------- chain ---------- */
+  .chain{display:flex;align-items:stretch;gap:0;margin-top:10px;flex-wrap:wrap}
+  .station{flex:1;min-width:190px;padding:20px 20px 20px 0;border-top:2px solid var(--rule);position:relative}
+  .station:last-child{border-top-color:var(--madder)}
+  .station::before{
+    content:"";position:absolute;top:-6px;left:0;width:10px;height:10px;
+    background:var(--rule);border-radius:50%;
+  }
+  .station:last-child::before{background:var(--madder)}
+  .station .st-n{font-family:var(--f-display);font-weight:600;font-size:21px;line-height:1.15;display:block}
+  .station:last-child .st-n{color:var(--madder)}
+  .station .st-d{font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.08em;color:var(--ink-faint);display:block;margin-top:5px}
+
+  /* ---------- notes ---------- */
+  .note{
+    margin-top:22px;padding:18px 20px;
+    background:var(--water-tint);
+    border-left:3px solid var(--water);
+  }
+  .note .label{color:var(--water);margin-bottom:8px;display:block}
+  .note p{font-size:16px;color:var(--ink-soft);margin:0;max-width:66ch}
+
+  /* ---------- glossary ---------- */
+  .gloss-wrap{overflow-x:auto;margin-top:8px}
+  table.gloss{border-collapse:collapse;width:100%;min-width:520px}
+  table.gloss th{
+    font-family:var(--f-label);font-weight:700;text-transform:uppercase;
+    letter-spacing:.12em;font-size:11.5px;color:var(--ink-faint);
+    text-align:left;padding:0 16px 9px 0;border-bottom:1px solid var(--rule);
+  }
+  table.gloss td{padding:11px 16px 11px 0;border-bottom:1px solid var(--rule);font-size:16px;vertical-align:top}
+  table.gloss td.say{font-family:var(--f-label);font-weight:600;letter-spacing:.04em;color:var(--madder);white-space:nowrap}
+  table.gloss td.mean{color:var(--ink-soft);font-size:15px}
+  table.gloss tr:last-child td{border-bottom:none}
+
+  footer{
+    padding-block:34px 44px;
+    display:flex;gap:10px 28px;flex-wrap:wrap;align-items:baseline;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    section.part{grid-template-columns:1fr;gap:0}
+    .rail{margin-bottom:14px}
+    .rail .rail-in{position:static;display:flex;align-items:baseline;gap:12px}
+    .rail .yr{margin-top:0;font-size:22px}
+    .fates,.ledger{grid-template-columns:1fr}
+    .strip{flex-direction:column;min-height:0}
+    .seg{flex-grow:0;flex-basis:auto;flex-direction:row;align-items:baseline;justify-content:flex-start;gap:12px;flex-wrap:wrap}
+    .seg .where{font-size:18px}
+    .seg .share{margin-left:auto}
+    .scale{display:none}
+  }
+  @media (max-width:520px){
+    body{font-size:16px}
+    .station{min-width:100%;padding-right:0}
+  }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">Three Uluses <span>/ History of Kazakhstan &middot; Lecture 1</span></div>
+    <button class="btn" id="notesBtn" type="button" aria-pressed="false">Speaker script</button>
+    <div class="timer">
+      <span class="clock num" id="clock">4:00</span>
+      <button class="btn" id="timerBtn" type="button">Start</button>
+      <button class="btn" id="resetBtn" type="button">Reset</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="hero">
+    <span class="label">Genghis Khan &middot; 1162&ndash;1227</span>
+    <h1>One steppe, cut <em>three ways</em></h1>
+    <p class="standfirst">In a single generation the Mongol Empire swallowed the Great Steppe and then split it between four sons. Three of those shares fell across what is now Kazakhstan &mdash; and that division set the terms of its politics for the next three hundred years.</p>
+    <div class="meta">
+      <span class="label">A four-minute talk</span>
+      <span class="label">Nine parts</span>
+      <span class="label">Alizhan Sembekov &middot; QAIRU</span>
+    </div>
+  </div>
+
+  <div class="tl-wrap">
+    <div class="tl">
+      <div class="tl-item"><span class="tl-y num">1162</span><span class="tl-t">Temujin is born into a broken clan</span></div>
+      <div class="tl-item key"><span class="tl-y num">1206</span><span class="tl-t">The kurultai names him Genghis Khan</span></div>
+      <div class="tl-item key"><span class="tl-y num">1218</span><span class="tl-t">The caravan and the envoys die at Otrar</span></div>
+      <div class="tl-item"><span class="tl-y num">1219</span><span class="tl-t">The army crosses into the Syr Darya lands</span></div>
+      <div class="tl-item key"><span class="tl-y num">1227</span><span class="tl-t">The uluses are fixed among the sons</span></div>
+      <div class="tl-item"><span class="tl-y num">1465</span><span class="tl-t">The Kazakh Khanate rises from that inheritance</span></div>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 01</span><span class="yr num">1206</span></div></div>
+    <div class="body">
+      <h2>A man with no clan builds the largest army on earth</h2>
+      <p class="lede">Genghis Khan was born around 1162 under the name Temujin. His father was poisoned, his clan scattered, and his family was left without protection &mdash; in steppe terms, without anything at all.</p>
+      <p>Over the next thirty years he reversed that completely. By war, by alliance, and by systematically dismantling the old tribal order, he bound the Mongol tribes into a single following. In <strong>1206</strong>, at a kurultai &mdash; an assembly of the nobility on the Onon river &mdash; he was proclaimed Genghis Khan, supreme ruler of all Mongols.</p>
+      <div class="note" data-note hidden>
+        <span class="label">Say this</span>
+        <p>Genghis Khan was born around 1162 under the name Temujin. His childhood was harsh: his father was poisoned, his clan fell apart, and his family was left without protection. But over thirty years he managed to unite the scattered Mongol tribes. In 1206, at a kurultai &mdash; an assembly of the nobility &mdash; he was proclaimed Genghis Khan, the supreme ruler of all Mongols.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 02</span><span class="yr">Reform</span></div></div>
+    <div class="body">
+      <h2>His real weapon was an organisation chart</h2>
+      <p>The decisive reform was the <strong>decimal system</strong>. The whole population was cut into tens, hundreds, thousands and tumens of ten thousand. A man no longer answered to the clan he was born into; he answered to the commander of his ten.</p>
+      <div class="ladder">
+        <div class="rung"><div class="fill" style="width:14%"><span>Arban</span></div><span class="cnt num">10</span></div>
+        <div class="rung"><div class="fill" style="width:30%"><span>Zuun</span></div><span class="cnt num">100</span></div>
+        <div class="rung"><div class="fill" style="width:56%"><span>Myangan</span></div><span class="cnt num">1,000</span></div>
+        <div class="rung"><div class="fill" style="width:92%"><span>Tumen</span></div><span class="cnt num">10,000</span></div>
+      </div>
+      <p>Two more reforms held it together. The <strong>Yasa</strong> was a single code of law binding on every subject of the empire, the khan's own family included. And promotion went <strong>by merit</strong>: a capable warrior could command regardless of his birth. Running through all of it was the <strong>yam</strong>, a chain of relay stations that moved a message across thousands of kilometres of grassland faster than any rival could react.</p>
+      <div class="note" data-note hidden>
+        <span class="label">Say this</span>
+        <p>His strength lay not only in his army, but in his organization. He carried out three important reforms. The first was the decimal system: the whole population was divided into tens, hundreds, thousands, and tumens of ten thousand men. This destroyed the old tribal division, and now a man obeyed his commander rather than his clan. The second reform was the Yasa, a single code of law binding on everyone. The third was promotion by merit rather than by birth: a talented warrior could become a commander regardless of his origin. In addition, the yam was created &mdash; a postal relay network that allowed messages to travel enormous distances.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 03</span><span class="yr num">1218</span></div></div>
+    <div class="body">
+      <h2>Otrar</h2>
+      <div class="pull">
+        <q>A trade caravan was killed at Otrar. Then the envoys sent to demand an answer were killed too.</q>
+        <div class="src"><span class="label">Inalchuq, known as Qaiyr Khan &middot; governor of the city</span></div>
+      </div>
+      <p style="margin-top:26px">For the Mongols this was not a commercial dispute. Killing an envoy was the gravest crime in their law, and it converted an ambition into an obligation. The western campaign had its justification.</p>
+      <div class="note" data-note hidden>
+        <span class="label">Say this</span>
+        <p>The pretext for the western campaign was the event of 1218 in Otrar. The governor of the city, Inalchuq, known as Qaiyr Khan, ordered the killing of a trade caravan sent by Genghis Khan, and afterwards the envoys were killed as well. For the Mongols, killing an envoy was the gravest crime, and this gave a formal justification for war.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 04</span><span class="yr num">1219</span></div></div>
+    <div class="body">
+      <h2>Two regions, two entirely different fates</h2>
+      <p>In 1219 the army crossed into the state of the Khwarezmshah. What happened next was not uniform &mdash; and the difference is the part most often left out.</p>
+      <div class="fates">
+        <div class="fate dark">
+          <h3>Southern Kazakhstan &mdash; broken</h3>
+          <p>Otrar held out for roughly six months before it fell. The cities of the Syr Darya were burned, the irrigation systems that fed them were destroyed, and the population was killed or driven off.</p>
+          <p class="cities">Otrar &middot; Sighnaq &middot; Ashnas &middot; Jend &middot; Sauran &middot; Yasi</p>
+        </div>
+        <div class="fate green">
+          <h3>Zhetysu &mdash; largely intact</h3>
+          <p>Here the local rulers submitted almost without a fight. They had no loyalty to the ruler who had seized power over them shortly before the Mongols arrived, and they had no interest in dying for him.</p>
+          <p class="cities">Submission, not siege</p>
+        </div>
+      </div>
+      <div class="note" data-note hidden>
+        <span class="label">Say this</span>
+        <p>In 1219 Genghis Khan's army invaded the state of the Khwarezmshah. Otrar held out for about six months and fell. Sighnaq, Ashnas, Jend, Sauran, and Yasi were taken. The cities of southern Kazakhstan were destroyed, the irrigation systems were ruined, and the population was either killed or driven away. Zhetysu, however, suffered far less: the local rulers submitted almost without a fight, because they were dissatisfied with their previous ruler.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 05</span><span class="yr">Division</span></div></div>
+    <div class="body">
+      <h2>Three shares fall across one country</h2>
+      <p>Genghis Khan divided the conquered lands among his sons during his own lifetime. The youngest, <strong>Tolui</strong>, took the Mongol homeland by custom. The other three shares landed on the territory of what is now Kazakhstan. Select a share to read it.</p>
+
+      <div class="strip" role="group" aria-label="The three uluses across Kazakhstan">
+        <button class="seg seg-a" style="--w:12" data-k="a" aria-pressed="true" type="button">
+          <span class="who">Ulus of Jochi</span>
+          <span class="where">West &amp; centre</span>
+          <span class="share num">from the Irtysh westward</span>
+        </button>
+        <button class="seg seg-b" style="--w:10" data-k="b" aria-pressed="false" type="button">
+          <span class="who">Ulus of Chagatai</span>
+          <span class="where">South &amp; Zhetysu</span>
+          <span class="share num">to Transoxiana</span>
+        </button>
+        <button class="seg seg-c" style="--w:7" data-k="c" aria-pressed="false" type="button">
+          <span class="who">Ulus of &Ouml;gedei</span>
+          <span class="where">North-east</span>
+          <span class="share num">upper Irtysh</span>
+        </button>
+      </div>
+      <div class="scale"><span class="label">West</span><span class="label">Schematic, not to scale</span><span class="label">East</span></div>
+
+      <div class="detail" id="detail" aria-live="polite">
+        <span class="label tag" id="dTag">The eldest son</span>
+        <h3 id="dTitle">Ulus of Jochi</h3>
+        <p id="dText">The western lands: from the Irtysh outward across Western and Central Kazakhstan and the whole Kipchak steppe. This is the share that mattered most for what came later &mdash; the Golden Horde grew out of it, and so, through the Ak Orda, did the Kazakh Khanate.</p>
+      </div>
+
+      <div class="note" data-note hidden>
+        <span class="label">Say this</span>
+        <p>During his own lifetime Genghis Khan divided the conquered lands among his sons. The ulus of Jochi, the eldest son, received the western lands &mdash; from the Irtysh and further west, that is, Western and Central Kazakhstan. The ulus of Chagatai covered Southern Kazakhstan, Zhetysu, and Transoxiana. The ulus of &Ouml;gedei consisted of the north-eastern lands, the upper Irtysh and the Tarbagatai region. The youngest son, Tolui, received the Mongol homeland according to Mongol custom. As a result, the territory of modern Kazakhstan was divided among three uluses.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 06</span><span class="yr">Ledger</span></div></div>
+    <div class="body">
+      <h2>What the division cost, and what it left behind</h2>
+      <div class="ledger">
+        <div class="col broke">
+          <h3>What it broke</h3>
+          <ul>
+            <li>Ties between regions that had taken centuries to form</li>
+            <li>The emergence of a single people and a single state &mdash; delayed by generations</li>
+            <li>The southern economy, once the Syr Darya cities and their canals were gone</li>
+          </ul>
+        </div>
+        <div class="col built">
+          <h3>What it built</h3>
+          <ul>
+            <li>Chinggisid legitimacy: only a descendant of Genghis Khan could be khan</li>
+            <li>That rule governed the Kazakh steppe until the nineteenth century</li>
+            <li>The ulus itself as a unit of government, inherited by every successor state</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" data-note hidden>
+        <span class="label">Say this</span>
+        <p>The consequences were twofold. On the one hand, the division broke the ties between regions that had been developing for centuries, delayed the formation of a single people and a single state, and the destruction of the cities along the Syr Darya undermined the economy of the south. On the other hand, the Mongols brought political principles that shaped the next three hundred years. The main one was Chinggisid legitimacy: only a descendant of Genghis Khan could be a khan. This rule operated in the Kazakh steppe until the nineteenth century. The ulus system of government was also inherited.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 07</span><span class="yr">Line</span></div></div>
+    <div class="body">
+      <h2>The conquerors dissolved into the conquered</h2>
+      <p>The Mongols were never numerous here. Within two or three generations they had been absorbed into the Turkic-speaking population, taking on its language and its customs. What survived was not a Mongol people but a Mongol <em>idea of rule</em>, carried forward by Turko-Mongol states.</p>
+      <div class="chain">
+        <div class="station"><span class="st-n">Ulus of Jochi</span><span class="st-d num">13th century</span></div>
+        <div class="station"><span class="st-n">The Ak Orda</span><span class="st-d num">14th&ndash;15th c.</span></div>
+        <div class="station"><span class="st-n">The Kazakh Khanate</span><span class="st-d num">from c. 1465</span></div>
+      </div>
+      <p style="margin-top:22px">The Mongol conquest did not erase the history of the steppe. It reorganised it inside a new frame. Read that way, the division of Kazakhstan among three uluses is not the end of its story &mdash; it is the opening of the next chapter.</p>
+      <div class="note" data-note hidden>
+        <span class="label">Say this</span>
+        <p>It is important to understand that the Mongol conquest did not erase the earlier history of the steppe, but reorganized it within a new framework. The Mongols themselves were few in number, and within two or three generations they dissolved into the Turkic-speaking population, adopting the local language and customs. As a result, Turko-Mongol states emerged, and it was out of the ulus of Jochi, through the Ak Orda, that the Kazakh Khanate later grew. Therefore, the division of Kazakhstan among three uluses was not the end of its history, but the beginning of a new stage. Thank you for your attention.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="part">
+    <div class="rail"><div class="rail-in"><span class="n">Part 08</span><span class="yr">Say it</span></div></div>
+    <div class="body">
+      <h2>The names that trip people up</h2>
+      <p>Every name in this talk that an English-speaking audience will not guess correctly, with the sound written out and the stress marked in capitals.</p>
+      <div class="gloss-wrap">
+        <table class="gloss">
+          <tr><th>Name</th><th>Say</th><th>What it is</th></tr>
+          <tr><td>Genghis Khan</td><td class="say">JENG-gis KAAN</td><td class="mean">Also heard as GHENG-gis</td></tr>
+          <tr><td>Temujin</td><td class="say">TEM-oo-jin</td><td class="mean">His birth name</td></tr>
+          <tr><td>kurultai</td><td class="say">koo-rool-TIE</td><td class="mean">Assembly of the nobility</td></tr>
+          <tr><td>Yasa</td><td class="say">YAA-sa</td><td class="mean">The imperial code of law</td></tr>
+          <tr><td>tumen</td><td class="say">too-MEN</td><td class="mean">A unit of ten thousand</td></tr>
+          <tr><td>Otrar</td><td class="say">ot-RAR</td><td class="mean">City on the Syr Darya</td></tr>
+          <tr><td>Qaiyr Khan</td><td class="say">ka-YIR KAAN</td><td class="mean">Its governor in 1218</td></tr>
+          <tr><td>Khwarezmshah</td><td class="say">kwa-REZM-shah</td><td class="mean">The ruler Genghis Khan attacked</td></tr>
+          <tr><td>Sighnaq</td><td class="say">sigh-NAK</td><td class="mean">Syr Darya city</td></tr>
+          <tr><td>Zhetysu</td><td class="say">zhe-tih-SOO</td><td class="mean">The seven-rivers region</td></tr>
+          <tr><td>Jochi</td><td class="say">JO-chi</td><td class="mean">Eldest son</td></tr>
+          <tr><td>Chagatai</td><td class="say">CHA-ga-TIE</td><td class="mean">Second son</td></tr>
+          <tr><td>&Ouml;gedei</td><td class="say">UH-ge-day</td><td class="mean">Third son, later Great Khan</td></tr>
+          <tr><td>Tolui</td><td class="say">to-LOO-i</td><td class="mean">Youngest son</td></tr>
+          <tr><td>ulus</td><td class="say">oo-LOOS</td><td class="mean">A share of the empire</td></tr>
+          <tr><td>Chinggisid</td><td class="say">CHING-gi-sid</td><td class="mean">Of Genghis Khan's line</td></tr>
+          <tr><td>Transoxiana</td><td class="say">tranz-ok-see-AA-na</td><td class="mean">Land beyond the Oxus</td></tr>
+          <tr><td>Ak Orda</td><td class="say">AK or-DA</td><td class="mean">Eastern Jochid centre</td></tr>
+        </table>
+      </div>
+      <div class="note" data-note hidden>
+        <span class="label">Two traps</span>
+        <p><strong>conquer</strong> is KON-ker with no "w" sound, but <strong>conquest</strong> is KON-kwest with one. And <strong>caravan</strong> takes its stress on the first syllable, KA-ra-van, not the last.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="label">Three Uluses</span>
+    <span class="label">Lecture 3 &middot; Week 3 &middot; QAIRU</span>
+    <span class="label">Dates before 1227 follow the standard chronology</span>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- speaker script ---- */
+  var notesBtn = document.getElementById("notesBtn");
+  var notes = Array.prototype.slice.call(document.querySelectorAll("[data-note]"));
+  var notesOn = false;
+  try{ notesOn = localStorage.getItem("tu-notes") === "1"; }catch(e){}
+  function paintNotes(){
+    notes.forEach(function(n){ n.hidden = !notesOn; });
+    notesBtn.setAttribute("aria-pressed", notesOn ? "true" : "false");
+    notesBtn.textContent = notesOn ? "Hide script" : "Speaker script";
+  }
+  notesBtn.addEventListener("click", function(){
+    notesOn = !notesOn;
+    try{ localStorage.setItem("tu-notes", notesOn ? "1" : "0"); }catch(e){}
+    paintNotes();
+  });
+  paintNotes();
+
+  /* ---- rehearsal timer ---- */
+  var TOTAL = 240;
+  var left = TOTAL, running = false, tick = null;
+  var clock = document.getElementById("clock");
+  var timerBtn = document.getElementById("timerBtn");
+  var resetBtn = document.getElementById("resetBtn");
+  function fmt(s){
+    var neg = s < 0;
+    var a = Math.abs(s);
+    var m = Math.floor(a / 60);
+    var r = a % 60;
+    return (neg ? "+" : "") + m + ":" + (r < 10 ? "0" : "") + r;
+  }
+  function paintClock(){
+    clock.textContent = fmt(left);
+    clock.classList.toggle("warn", left <= 30);
+  }
+  function stop(){
+    running = false;
+    if(tick){ clearInterval(tick); tick = null; }
+    timerBtn.textContent = "Start";
+  }
+  timerBtn.addEventListener("click", function(){
+    if(running){ stop(); return; }
+    running = true;
+    timerBtn.textContent = "Pause";
+    tick = setInterval(function(){
+      left -= 1;
+      paintClock();
+      if(left <= -60) stop();
+    }, 1000);
+  });
+  resetBtn.addEventListener("click", function(){
+    stop();
+    left = TOTAL;
+    paintClock();
+  });
+  paintClock();
+
+  /* ---- territory strip ---- */
+  var DATA = {
+    a: {
+      tag: "The eldest son",
+      title: "Ulus of Jochi",
+      text: "The western lands: from the Irtysh outward across Western and Central Kazakhstan and the whole Kipchak steppe. This is the share that mattered most for what came later — the Golden Horde grew out of it, and so, through the Ak Orda, did the Kazakh Khanate."
+    },
+    b: {
+      tag: "The second son",
+      title: "Ulus of Chagatai",
+      text: "Southern Kazakhstan, Zhetysu and Transoxiana — the settled, urban, irrigated half of the inheritance. It joined the cities of the Syr Darya to the oasis towns south of them, which made it rich and made it contested."
+    },
+    c: {
+      tag: "The third son",
+      title: "Ulus of Ögedei",
+      text: "The north-east: the upper Irtysh and the Tarbagatai. The smallest of the three shares here, and the one furthest from the trade routes — though Ögedei himself succeeded his father as Great Khan of the whole empire."
+    }
+  };
+  var segs = Array.prototype.slice.call(document.querySelectorAll(".seg"));
+  var dTag = document.getElementById("dTag");
+  var dTitle = document.getElementById("dTitle");
+  var dText = document.getElementById("dText");
+  segs.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var k = btn.getAttribute("data-k");
+      var d = DATA[k];
+      if(!d) return;
+      segs.forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      dTag.textContent = d.tag;
+      dTitle.textContent = d.title;
+      dText.textContent = d.text;
+    });
+  });
+})();
+</script>
+</body>
+</html>
