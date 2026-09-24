@@ -17,7 +17,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-html = Path(__file__).with_name("index.html").read_text(encoding="utf-8")
+html = Path(__file__).with_name("index33.html").read_text(encoding="utf-8")
 
 # Страница прокручивается внутри окна, поэтому шапка с таймером остаётся закреплённой
 components.html(html, height=950, scrolling=True)
